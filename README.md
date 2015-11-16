@@ -1,9 +1,9 @@
 # what & why?
 
-Measuring indoor Co2 and Temperature
+Indoor measuring of Co2 and Temperature
 
 Especially in office environments employees are sensitive to high levels of Co2 and/or uncomfortably with hot office temperatures.
-This projects consists of two parts, the monitor.py and the webinterface
+This project consists of two parts, the monitor.py and the webinterface.
 
 * **monitor.py** to read the data from the TFA-Dostmann AirControl Mini CO2 sensor and generating the graphs
 * **webinterface** to display the graphs
@@ -25,17 +25,19 @@ Download [Raspbian](https://www.raspberrypi.org/downloads/) and [install it on t
 # installation on the raspberry
 
 0) Boot the raspberry with the raspbian and configure according to your needs.
-monitor.py should not run as root, so we create a service user:
 
 At the moment, monitor.py renders the graphs to _/var/www/html/images_, and creates the RRD database in _/var/local/monitor/co2-temp.rrd_.
 
 To change this, change the variables *RRDDB_LOC* and *GRAPHOUT_DIR* in monitor.py.
+
+monitor.py should not run as root, so we create a service user:
 
 ```
 sudo adduser --home /var/local/monitor --shell /usr/sbin/nologin --disabled-password monitor
 ```
 
 1) install software
+
 Other than Wooga this setup generates and serves the graphs locally, thus the following components are needed:
 ```
 sudo apt-get install rrdtool python-rrdtool nginx ntp
@@ -58,6 +60,7 @@ sudo chown -R monitor: /var/www/html/images
 ```
 
 3) fix socket permissions
+
 The python script reading the sensor should not run as root, so the device permissions need to be set accordingly.
 
 For a non-permanent fix run as root:
@@ -75,6 +78,7 @@ echo 'ACTION=="add", KERNEL=="hidraw[0-9]*", MODE="0666"' > /etc/udev/rules.d/40
 After plugging the TFA device in, at least one device file (e.g. /dev/hidraw0) should be generated with the correct permissions.
 
 4) run the script
+
 monitor.py can be tested by invoking:
 ```
 monitor.py /dev/hidraw0
