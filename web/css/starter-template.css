@@ -1,0 +1,24 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+#expand-box {
+padding: 0;
+border: 0px solid #BBB;
+margin: 2px 0 0 0;
+display: inline-block;
+}
+
+#expand-box-header {
+margin: 0;
+padding: 0 0 3px 2px;
+overflow: auto;
+border: 0px solid #000;
+vertical-align: middle;
+}
+
+#expand_box_sub_header { clear: both; }

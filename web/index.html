@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>CO2 Belastung und Temperatur im Linux-Server-Team-Büro</title>
+
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!--link href="theme.css" rel="stylesheet"-->
+    <link href="css/starter-template.css" rel="stylesheet">
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!--script src="jquery-2.1.4.min.js"></script-->
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- cookie handling -->
+    <script src="js/jquery_cookie.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">CO2 und Temperatur im Linux-Server-Team Büro</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active navli"><a href="#" id="8h">8 Stunden</a></li>
+            <li class="navli"><a href="#" id="24h">24 Stunden</a></li>
+            <li class="navli"><a href="#" id="7d">7 Tage</a></li>
+            <li class="navli"><a href="#" id="1m">1 Monat</a></li>
+            <li class="navli"><a href="#" id="1y">1 Jahr</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h2 id="page-header" class="page-header">Übersicht letzten 8 Stunden</h2>
+            <h4>CO2 in PPM</h4>
+            <p><img src="images/co2-8h-graph.png" /></p>
+            <h4>Temperatur in °C</h4>
+            <p><img src="images/temp-8h-graph.png" /></p>
+
+            <div id="time">Last updated: </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        var periods = {
+                '8h':  "Übersicht letzten 8 Stunden",
+                '24h':  "Übersicht letzten 24 Stunden",
+                '7d':  "Übersicht letzten 7 Tage",
+                '1m':  "Übersicht letztes Monat",
+                '1y':  "Übersicht letztes Jahr"
+            };
+
+        $(document).ready(function() {
+            console.debug("document ready called");
+
+            // when a preset cookie is found, initialize the page accordingly
+            if ($.cookie("period")) {
+                console.debug("preset cookie found");
+
+                var lper = get_period_from_cookie();
+                console.debug("will initialize page with period " + lper);
+
+                // get the a href element which should be activated
+                $("a").each(function() {
+                    if (this.id == lper) {
+                        click_handler(this);
+                    }
+                });
+            }
+
+            setInterval('reloadImages()', 6000); // 60 seconds
+            setTime();
+
+            // register click event for a href elements
+            $('a').click(function() {
+                click_handler(this);
+            });
+        });
+
+        function click_handler(el)
+        {
+            console.debug("click handler called for period[" + el.id + "]");
+
+            // setting period cookie
+            $.cookie("period", el.id);
+
+            // reload images according to chosen period
+            reloadImages();
+
+            // we also need to change the title
+            update_title();
+
+            // set new active li
+            set_li_active(el);
+        }
+
+        function set_li_active(el)
+        {
+            $('li').each(function() {
+                if ($(this).hasClass("navli") && $(this).hasClass("active")) {
+                    $(this).removeClass("active");
+                }
+            });
+            $(el).parent("li").addClass("active");
+        }
+
+        function update_title()
+        {
+            var lper = get_period_from_cookie();
+            console.debug("will update title to: " + periods[lper]);
+            document.getElementById('page-header').innerHTML = periods[lper];
+        }
+
+        function checkTime(i) {
+            return (i < 10) ? "0" + i : i;
+        }
+    
+        function get_period_from_cookie()
+        {
+            var lper = ($.cookie("period")) ? $.cookie("period") : "8h";
+            console.debug("retrieved cookie value for period: " + lper);
+            return(lper);
+        }
+
+        function setTime()
+        {
+          var today = new Date(),
+            h = checkTime(today.getHours()),
+            m = checkTime(today.getMinutes()),
+            s = checkTime(today.getSeconds());
+
+            document.getElementById('time').innerHTML = "Last updated: " + h + ":" + m + ":" + s;
+        }
+
+        function reloadImages()
+        {
+            var lper = get_period_from_cookie();
+            console.debug("will reload images for period[" + lper + "]");
+
+            $('img').each(function() {
+                // we get the url for the image
+                var url = $(this).attr('src').split('?')[0];
+
+                // replace period with actual period
+                url = url.replace(/-.*?-/, "-" + lper + "-");
+
+                // add random value 
+                $(this).attr('src', url + '?' + Math.random());
+            });
+    
+            /* lets update the time */
+            setTime();
+        }
+    </script>
+
+  </body>
+</html>
