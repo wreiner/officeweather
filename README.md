@@ -10,7 +10,7 @@ This project consists of two parts, the monitor.py and the webinterface.
 
 **Example Screenshot**
 
-![alt tag](https://raw.github.com/wreiner/officeweather/master/example-screenshot.png)
+![This is how it looks](https://github.com/wreiner/officeweather/blob/master/example-screenshot.png)
 
 # requirements
 
