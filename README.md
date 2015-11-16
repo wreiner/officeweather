@@ -8,6 +8,10 @@ This project consists of two parts, the monitor.py and the webinterface.
 * **monitor.py** to read the data from the TFA-Dostmann AirControl Mini CO2 sensor and generating the graphs
 * **webinterface** to display the graphs
 
+**Example Screenshot**
+
+![alt tag](https://raw.github.com/wreiner/officeweather/master/example-screenshot.png)
+
 # requirements
 
 ## hardware
