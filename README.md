@@ -10,7 +10,7 @@ This project consists of two parts, the monitor.py and the webinterface.
 
 **Example Screenshot**
 
-![This is how it looks](https://github.com/wreiner/officeweather/blob/master/example-screenshot.png)
+![This is how it looks.](https://github.com/wreiner/officeweather/blob/master/example-screenshot.png)
 
 # requirements
 
@@ -34,7 +34,7 @@ At the moment, monitor.py renders the graphs to _/var/www/html/images_, and crea
 
 To change this, change the variables *RRDDB_LOC* and *GRAPHOUT_DIR* in monitor.py.
 
-monitor.py should not run as root, so we create a service user:
+monitor.py should not run as root, so we create a service user (the group for this user is created automatically by adduser):
 
 ```
 sudo adduser --home /var/local/monitor --shell /usr/sbin/nologin --disabled-password monitor
@@ -76,7 +76,7 @@ sudo chmod a+rw /dev/hidraw0
 The better way to deal with this sitaution is to set the permissions using udev rules:
 
 ```
-echo 'ACTION=="add", KERNEL=="hidraw[0-9]*", MODE="0666"' > /etc/udev/rules.d/40-hidrwaw.rules
+echo 'ACTION=="add", KERNEL=="hidraw[0-9]*", MODE="0664", GROUP="monitor"' > /etc/udev/rules.d/40-hidrwaw.rules
 ```
 
 After plugging the TFA device in, at least one device file (e.g. /dev/hidraw0) should be generated with the correct permissions.
