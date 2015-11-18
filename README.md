@@ -73,10 +73,28 @@ For a non-permanent fix run as root:
 sudo chmod a+rw /dev/hidraw0
 ```
 
-The better way to deal with this sitaution is to set the permissions using udev rules:
+The better way to deal with this sitaution is to set the permissions using udev rules.
+
+We want to set only the really needed permissions on the device, therefor the udev-rule should only apply to the specific device, or product which is announced by the device when USB initializes it.
+
+To get the product name the bus and device id from *lsusb* is needed:
 
 ```
-echo 'ACTION=="add", KERNEL=="hidraw[0-9]*", MODE="0664", GROUP="monitor"' > /etc/udev/rules.d/40-hidrwaw.rules
+lsusb 
+Bus 001 Device 004: ID 04d9:a052 Holtek Semiconductor, Inc.
+```
+
+With this information the product name can be read from udevadm, using the bus id *001* and the device id *004* like this:
+
+```
+udevadm info -a -p $(udevadm info -q path -n /dev/bus/usb/001/004) | grep product
+    ATTR{product}=="USB-zyTemp"
+```
+
+The product name is in this case *USB-zyTemp* which can be used in the udev rule:
+
+```
+echo 'ACTION=="add", SUBSYSTEMS=="usb", ATTRS{product}=="USB-zyTemp", MODE="0664", GROUP="monitor"' > /etc/udev/rules.d/40-hidrwaw.rules
 ```
 
 After plugging the TFA device in, at least one device file (e.g. /dev/hidraw0) should be generated with the correct permissions.
