@@ -51,7 +51,7 @@ systemctl enable nginx
 systemctl start nginx
 
 systemctl enable ntp                                                            
-systemctl start ntp 
+systemctl start ntp
 ```
 
 Copy monitor.py and the webinterface to their location:
@@ -60,6 +60,7 @@ Copy monitor.py and the webinterface to their location:
 sudo cp monitor.py /usr/bin
 sudo mv /var/www/html/index.html /var/www/html/index.nginx-debian.html
 sudo rsync -av --progress web/* /var/www/html
+sudo mkdir /var/www/html/images
 sudo chown -R monitor: /var/www/html/images
 ```
 
@@ -80,7 +81,7 @@ We want to set only the really needed permissions on the device, therefor the ud
 To get the product name the bus and device id from *lsusb* is needed:
 
 ```
-lsusb 
+lsusb
 Bus 001 Device 004: ID 04d9:a052 Holtek Semiconductor, Inc.
 ```
 
@@ -108,7 +109,7 @@ monitor.py /dev/hidraw0
 
 5) run on startup
 
-monitor.py can safely be called via a cronjob; it will exit if another instance is already running. 
+monitor.py can safely be called via a cronjob; it will exit if another instance is already running.
 
 The cronjob can be added to /etc/crontab like this:
 
