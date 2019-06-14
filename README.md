@@ -74,7 +74,7 @@ For a non-permanent fix run as root:
 sudo chmod a+rw /dev/hidraw0
 ```
 
-The better way to deal with this sitaution is to set the permissions using udev rules.
+The better way to deal with this situation is to set the permissions using udev rules.
 
 We want to set only the really needed permissions on the device, therefor the udev-rule should only apply to the specific device, or product which is announced by the device when USB initializes it.
 
