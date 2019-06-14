@@ -104,8 +104,10 @@ After plugging the TFA device in, at least one device file (e.g. /dev/hidraw0) s
 
 monitor.py can be tested by invoking:
 ```
-monitor.py /dev/hidraw0
+sudo -u monitor monitor.py /dev/hidraw0
 ```
+
+We need to run it as `monitor` user because by default RRD databse is located in the folder where only `monitor` user has access to and access to a socket was granted to monitor group.
 
 5) run on startup
 
