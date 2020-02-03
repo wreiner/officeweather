@@ -5,7 +5,7 @@ Indoor measuring of Co2 and Temperature
 Especially in office environments employees are sensitive to high levels of Co2 and/or uncomfortably with hot office temperatures.
 This project consists of two parts, the monitor.py and the webinterface.
 
-* **monitor.py** to read the data from the TFA-Dostmann AirControl Mini CO2 sensor and generating the graphs
+* **monitor.py** to read the data from TFA-Dostmann sensors and generating the graphs
 * **webinterface** to display the graphs
 
 **Example Screenshot**
@@ -16,7 +16,10 @@ This project consists of two parts, the monitor.py and the webinterface.
 
 ## hardware
 
-1) [TFA-Dostmann AirControl Mini CO2 Messgerät](http://www.amazon.de/dp/B00TH3OW4Q) -- 80 euro
+1) Multiple CO2 Sensors are supported:
+
+    - [TFA-Dostmann AirControl Mini CO2 Messgerät](http://www.amazon.de/dp/B00TH3OW4Q) -- 65 euro (sends encrypted data)
+    - [TFA-Dostmann AIRCO2NTROL Coach CO2 Monitor](http://www.amazon.de/dp/B07R4XM9Z6) -- 72 euro (sends unencrypted data)
 
 2) [Raspberry PI 2 Model B](http://www.amazon.de/dp/B00T2U7R7I) -- 40 euro
 

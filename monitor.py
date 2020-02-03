@@ -130,9 +130,16 @@ if __name__ == "__main__":
             "RRA:MAX:0.5:12:744",
             "RRA:MAX:0.5:12:61320")
 
+    data_encrypted_print = False
     while True:
         data = list(ord(e) for e in fp.read(8))
-        decrypted = decrypt(key, data)
+        if data[4] == 0x0d and (sum(data[:3]) & 0xff) == data[3]:
+            decrypted = data
+            if data_encrypted_print == False:
+                sys.stderr.write("Info: data not encrypted\n")
+                data_encrypted_print = True
+        else:
+            decrypted = decrypt(key, data)
         if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:
             print hd(data), " => ", hd(decrypted),  "Checksum error"
         else:
