@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 # based on code by henryk ploetz
 # https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/log/17909-all-your-base-are-belong-to-us
@@ -84,14 +84,14 @@ if __name__ == "__main__":
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         ## Create an abstract socket, by prefixing it with null.
         s.bind('\0postconnect_gateway_notify_lock')
-    except socket.error, e:
+    except socket.error as e:
         # if script is already running just exit silently
         sys.exit(0)
             
     key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]    
     fp = open(sys.argv[1], "a+b",  0)
     HIDIOCSFEATURE_9 = 0xC0094806
-    set_report = "\x00" + "".join(chr(e) for e in key)
+    set_report = bytes([0x00] + key)
     fcntl.ioctl(fp, HIDIOCSFEATURE_9, set_report)
     
     #parser = argparse.ArgumentParser(description='Plot CO2 and TEMP')
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     stamp = now()
 
     if not os.path.isfile(RRDDB_LOC):
-        print "RRD database not found, generating it .."
+        print("RRD database not found, generating it ..")
 
         # updated every 5 minutes (--step 300)
         # two datasources which can hold unlimit values min and max
@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     data_encrypted_print = False
     while True:
-        data = list(ord(e) for e in fp.read(8))
+        data = list(fp.read(8))
         if data[4] == 0x0d and (sum(data[:3]) & 0xff) == data[3]:
             decrypted = data
             if data_encrypted_print == False:
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         else:
             decrypted = decrypt(key, data)
         if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:
-            print hd(data), " => ", hd(decrypted),  "Checksum error"
+            print(hd(data), " => ", hd(decrypted),  "Checksum error")
         else:
             op = decrypted[0]
             val = decrypted[1] << 8 | decrypted[2]
@@ -155,7 +155,7 @@ if __name__ == "__main__":
                 sys.stdout.flush()
             
                 if now() - stamp > 60:
-                    print ">>> sending dataset CO2: %4i TMP: %3.1f .." % (co2, tmp)
+                    print(">>> sending dataset CO2: %4i TMP: %3.1f .." % (co2, tmp))
                     rrd_update(RRDDB_LOC, 'N:%s:%s' % (co2, tmp))
                     graphout("8h")
                     graphout("24h")
